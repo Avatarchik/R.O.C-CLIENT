@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Configuration;
 using System.Collections.Generic;
+using System.Threading;
 
 public class NetworkScript : MonoBehaviour
 {
@@ -16,45 +17,58 @@ public class NetworkScript : MonoBehaviour
     private int port = 4500;
     private String ip = "92.144.127.42"; //ip internet
     private IPAddress udpAddr;
-
-
-    public delegate void RequestReceivedEventHandler(string message);
-    public event RequestReceivedEventHandler OnRequestReceived;
-
-    // Use this to trigger the event
-    protected virtual void ThisRequestReceived(string message)
-    {
-        RequestReceivedEventHandler handler = OnRequestReceived;
-        if (handler != null)
-        {
-            handler(message);
-        }
-    }
-
-    // We use this to keep tasks needed to run in the main thread
-    private static readonly Queue<Action> tasks = new Queue<Action>();
+    private Thread receiveThread;
 
     // Use this for initialization
     void Start()
     {
         Debug.Log("toto");
-        SetUpNetwork("191.168.1.15", 4500);
+        SetUpNetwork("92.144.127.42", 1250);
     }
 
     public int SetUpNetwork(string ip, int port)
     {
         this.port = port;
         this.ip = ip;
-        //Debug.Log("Try connect tcp");
-        //if (InitTcpClient() == -1)
-        //    return (-1);
         Debug.Log("Try connect sender");
         if (InitUdpClientSend() == -1)
             return (-1);
+        receiveThread = new Thread(
+    new ThreadStart(ReceiveData));
+        receiveThread.IsBackground = true;
+        receiveThread.Start();
         Debug.Log("Try connect udp receive");
-        if (InitUdpClientReceive() == -1)
-            return (-1);
+        //if (InitUdpClientReceive() == -1)
+        //    return (-1);
         return (0);
+    }
+
+    private void ReceiveData()
+    {
+        udpClientReceiver = new UdpClient();
+        while (true)
+        {
+            IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            try
+            {
+
+                // Blocks until a message returns on this socket from a remote host.
+                Byte[] receiveBytes = udpClientReceiver.Receive(ref RemoteIpEndPoint);
+
+                string returnData = Encoding.ASCII.GetString(receiveBytes);
+
+                Debug.Log("This is the message you received " +
+                                             returnData.ToString());
+                Debug.Log("This message was sent from " +
+                                            RemoteIpEndPoint.Address.ToString() +
+                                            " on their port number " +
+                                            RemoteIpEndPoint.Port.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
     }
 
     int InitTcpClient()
@@ -85,22 +99,46 @@ public class NetworkScript : MonoBehaviour
         {
             this.udpClientReceiver = new UdpClient();
             this.udpClientReceiver.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            Debug.Log("Try new Ipendpoint");
             IPEndPoint requestGroupEP = new IPEndPoint(IPAddress.Any, this.port);
+            Debug.Log("Try bind");
             this.udpClientReceiver.Client.Bind(requestGroupEP);
+            Debug.Log("Try receive");
             this.udpClientReceiver.BeginReceive(new AsyncCallback(AsyncUdpReceive), null);
+            Debug.Log("Begin Receive");
         }
         catch (Exception e)
         {
             Debug.Log(e.ToString());
             return (-1);
         }
-        // Listen for the request
-        this.OnRequestReceived += (message) =>
-        {
-            Debug.Log("Request Received: " + message);
-            // Do some more stuff 
-        };
         return (0);
+    }
+
+    private void AsyncUdpReceive(IAsyncResult result)
+    {
+        try
+        {
+            Debug.Log("Start Async Task");
+            Debug.Log("Try new Ipendpoint");
+            IPEndPoint receiveIPGroup = new IPEndPoint(IPAddress.Any, this.port);
+            byte[] received;
+            if (this.udpClientReceiver != null)
+            {
+                received = this.udpClientReceiver.EndReceive(result, ref receiveIPGroup);
+                Debug.Log("MON MSGGGGG = " + received);
+            }
+            else
+            {
+                return;
+            }
+            string receivedString = System.Text.Encoding.ASCII.GetString(received);
+            this.udpClientReceiver.BeginReceive(new AsyncCallback(AsyncUdpReceive), null);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.ToString());
+        }
     }
 
     int InitUdpClientSend()
@@ -127,12 +165,15 @@ public class NetworkScript : MonoBehaviour
     {
         try
         {
-            string message = "Test Sending";
+            string message = "Test Toto";
 
             if (message != "")
             {
-                Debug.Log("Sendering Request: " + message);
+                Debug.Log("IP: " + this.ip);
+                Debug.Log("PORT: " + this.port);
+                Debug.Log("Sendering Request: " + message + "SIZE = " + message.Length.ToString());
                 this.udpClientSender.Send(System.Text.Encoding.ASCII.GetBytes(message), message.Length);
+                Debug.Log("Send Done");
             }
         }
         catch (ObjectDisposedException e)
@@ -142,59 +183,8 @@ public class NetworkScript : MonoBehaviour
         }
 
     }
-    void HandleTasks()
-    {
-        while (tasks.Count > 0)
-        {
-            Action task = null;
 
-            lock (tasks)
-            {
-                if (tasks.Count > 0)
-                {
-                    task = tasks.Dequeue();
-                }
-            }
-
-            task();
-        }
-    }
-
-    public void QueueOnMainThread(Action task)
-    {
-        lock (tasks)
-        {
-            tasks.Enqueue(task);
-        }
-    }
-
-    private void AsyncUdpReceive(IAsyncResult result)
-    {
-        IPEndPoint receiveIPGroup = new IPEndPoint((System.Net.IPAddress.Parse(this.ip)), this.port);
-        byte[] received;
-        if (this.udpClientReceiver != null)
-        {
-            received = this.udpClientReceiver.EndReceive(result, ref receiveIPGroup);
-        }
-        else
-        {
-            return;
-        }
-        this.udpClientReceiver.BeginReceive(new AsyncCallback(AsyncUdpReceive), null);
-        string receivedString = System.Text.Encoding.ASCII.GetString(received);
-
-
-        this.QueueOnMainThread(() =>
-        {
-            // Fire the event
-            this.ThisRequestReceived(receivedString);
-        });
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        this.HandleTasks();
     }
 }
