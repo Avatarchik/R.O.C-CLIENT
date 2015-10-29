@@ -7,6 +7,7 @@ using System.Text;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine.UI;
 
 public class NetworkScript : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class NetworkScript : MonoBehaviour
     private IPAddress udpAddr;
     private Thread receiveThread = null;
     private static readonly Queue<Action> tasks = new Queue<Action>();
-
+    private int i = 0;
 
     public delegate void RequestReceivedEventHandler(string message);
     public event RequestReceivedEventHandler OnRequestReceived;
@@ -34,6 +35,13 @@ public class NetworkScript : MonoBehaviour
             handler(message);
         }
     }
+
+
+    void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
+
 
     // Use this for initialization
     void Start()
@@ -176,11 +184,13 @@ public class NetworkScript : MonoBehaviour
 
     void Update()
     {
+        i++;
         this.HandleTasks();
     }
 
-    void HandleTasks()
+    public void HandleTasks()
     {
+        GameObject.Find("TestText").GetComponent<Text>().text = i.ToString();
         while (tasks.Count > 0)
         {
             Action task = null;
