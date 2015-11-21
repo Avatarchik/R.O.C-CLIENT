@@ -53,7 +53,7 @@ public class NetworkScript : MonoBehaviour
     {
         this.ip = GameObject.Find("IpField").GetComponent<InputField>().text;
         this.port = Int32.Parse(GameObject.Find("PortField").GetComponent<InputField>().text);
-        Debug.Log("Try connect sender");
+        Debug.Log("Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
         if (InitUdpClientSend() == -1)
             return (-1);
         InitUdpClientReceive();
@@ -189,7 +189,7 @@ public class NetworkScript : MonoBehaviour
 
     public void HandleTasks()
     {
-        GameObject.Find("TestText").GetComponent<Text>().text = this.i.ToString();
+//        GameObject.Find("TestText").GetComponent<Text>().text = this.i.ToString();
         while (tasks.Count > 0)
         {
             Action task = null;
