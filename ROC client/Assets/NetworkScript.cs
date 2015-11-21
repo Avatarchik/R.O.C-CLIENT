@@ -183,13 +183,13 @@ public class NetworkScript : MonoBehaviour
 
     void Update()
     {
-        i++;
+        this.i++;
         this.HandleTasks();
     }
 
     public void HandleTasks()
     {
-        GameObject.Find("TestText").GetComponent<Text>().text = i.ToString();
+        GameObject.Find("TestText").GetComponent<Text>().text = this.i.ToString();
         while (tasks.Count > 0)
         {
             Action task = null;
