@@ -47,13 +47,11 @@ public class NetworkScript : MonoBehaviour
     void Start()
     {
         Debug.Log("toto");
-        SetUpNetwork("192.168.1.15", 1250);
+        SetUpNetwork();
     }
 
-    public int SetUpNetwork(string ip, int port)
+    public int SetUpNetwork()
     {
-        this.port = port;
-        this.ip = ip;
         Debug.Log("Try connect sender");
         if (InitUdpClientSend() == -1)
             return (-1);
