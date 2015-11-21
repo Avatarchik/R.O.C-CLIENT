@@ -47,11 +47,12 @@ public class NetworkScript : MonoBehaviour
     void Start()
     {
         Debug.Log("toto");
-        SetUpNetwork();
     }
 
     public int SetUpNetwork()
     {
+        this.ip = GameObject.Find("IpField").GetComponent<InputField>().text;
+        this.port = Int32.Parse(GameObject.Find("PortField").GetComponent<InputField>().text);
         Debug.Log("Try connect sender");
         if (InitUdpClientSend() == -1)
             return (-1);
