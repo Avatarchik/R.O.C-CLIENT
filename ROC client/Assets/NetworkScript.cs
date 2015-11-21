@@ -53,7 +53,7 @@ public class NetworkScript : MonoBehaviour
     {
         this.ip = GameObject.Find("IpField").GetComponent<InputField>().text;
         this.port = Int32.Parse(GameObject.Find("PortField").GetComponent<InputField>().text);
-        Debug.Log("Try connect sender");
+        Debug.Log("Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
         if (InitUdpClientSend() == -1)
             return (-1);
         InitUdpClientReceive();
