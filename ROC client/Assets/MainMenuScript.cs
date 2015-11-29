@@ -14,7 +14,6 @@ public class MainMenuScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         networkScript = GameObject.Find("ROCNetworkManager").GetComponent<NetworkScript>();
-        networkScript.HandleTasks();
     }
 
     //TODO alex_m : Add a check that the board can be accessed via a ping

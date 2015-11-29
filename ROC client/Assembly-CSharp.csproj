@@ -45,19 +45,25 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\DataTransferScript.cs" />
+     <Compile Include="Assets\ImageScript.cs" />
      <Compile Include="Assets\MainMenuScript.cs" />
+     <Compile Include="Assets\MainSceneManagerScript.cs" />
      <Compile Include="Assets\NetworkScript.cs" />
- <Reference Include="UnityEngine.Advertisements">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
- </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
- <Reference Include="UnityEngine.Analytics">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ <Reference Include="OpenCvSharp.UserInterface">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/OpenCvSharp.UserInterface.dll</HintPath>
+ </Reference>
+ <Reference Include="OpenCvSharp.Blob">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/OpenCvSharp.Blob.dll</HintPath>
+ </Reference>
+ <Reference Include="OpenCvSharp">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/OpenCvSharp.dll</HintPath>
  </Reference>
  <Reference Include="Mono.Cecil">
  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/Mono.Cecil.dll</HintPath>
