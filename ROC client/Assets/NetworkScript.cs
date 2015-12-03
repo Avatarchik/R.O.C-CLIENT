@@ -20,7 +20,6 @@ public class NetworkScript : MonoBehaviour
     private String ip = "92.144.127.214"; //ip internet
     private IPAddress udpAddr;
 
-
     // Use this for initialization
     void Start()
     {
@@ -40,9 +39,9 @@ public class NetworkScript : MonoBehaviour
     void videoReceive()
     {
         Debug.Log("init receive 1");
-        VideoCapture capture = new VideoCapture("E://Téléchargement//SampleVideo_1080x720_10mb.mp4");
-
-
+        VideoCapture capture = new VideoCapture(0);
+        if (!capture.IsOpened())
+            Debug.Log("Failed to open camera");
         int sleepTime = (int)Math.Round(1000 / capture.Fps);
         Debug.Log("init receive 2");
 
@@ -51,17 +50,20 @@ public class NetworkScript : MonoBehaviour
             // Frame image buffer
             Mat image = new Mat();
 
-            while (true)
+            var i = 0;
+            while (i != 100)
             {
                 capture.Grab();
                 NativeMethods.videoio_VideoCapture_operatorRightShift_Mat(capture.CvPtr, image.CvPtr);
-                //capture.Read(image); // same as cvQueryFrame
+              //  capture.Read(image); // same as cvQueryFrame
+                Debug.Log("init receive 3");
                 if (image.Empty())
                     break;
-                Debug.Log("init receive 3");
+                Debug.Log("init receive 4");
 
-                window.ShowImage(image);
-                Cv2.WaitKey(sleepTime);
+                 window.ShowImage(image);
+                Cv2.WaitKey(30);
+                i++;
             }
         }
     }
