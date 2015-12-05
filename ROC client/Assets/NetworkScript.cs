@@ -39,7 +39,7 @@ public class NetworkScript : MonoBehaviour
     void videoReceive()
     {
         Debug.Log("init receive 1");
-        VideoCapture capture = new VideoCapture(0);
+        VideoCapture capture = new VideoCapture("rtsp://192.168.1.12:1935/vod/Grimm.mp4");
         if (!capture.IsOpened())
             Debug.Log("Failed to open camera");
         int sleepTime = (int)Math.Round(1000 / capture.Fps);
@@ -50,8 +50,8 @@ public class NetworkScript : MonoBehaviour
             // Frame image buffer
             Mat image = new Mat();
 
-            var i = 0;
-            while (i != 100)
+            int i = 0;
+            while (i != 27)
             {
                 capture.Grab();
                 NativeMethods.videoio_VideoCapture_operatorRightShift_Mat(capture.CvPtr, image.CvPtr);
@@ -62,8 +62,7 @@ public class NetworkScript : MonoBehaviour
                 Debug.Log("init receive 4");
 
                  window.ShowImage(image);
-                Cv2.WaitKey(30);
-                i++;
+                i = Cv2.WaitKey(10);
             }
         }
     }
