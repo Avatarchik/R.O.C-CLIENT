@@ -17,20 +17,6 @@ public class MainSceneManagerScript : MonoBehaviour {
 
         gameMenu = GameObject.Find("Menu");
         gameMenu.SetActive(ingameMenuToggle);
-        testImageOpencv();
-    }
-
-    void testImageOpencv()
-    {
-        testTexture = new Texture2D(1980, 1024);
-        testMat = new Mat(Application.dataPath + "/testpattern.png", ImreadModes.Unchanged);
-        if (testMat.Empty()) //check whether the image is loaded or not
-        {
-            print("Fail to load image");
-        }
-        byte[] imgdata = testMat.ToBytes(".png");
-        testTexture.LoadImage(imgdata);
-        GameObject.Find("Image").GetComponent<Image>().sprite = Sprite.Create(testTexture, new UnityEngine.Rect(0, 0, 1920, 1080), Vector2.zero);
     }
 
     // Update is called once per frame

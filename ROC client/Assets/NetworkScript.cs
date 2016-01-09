@@ -12,13 +12,18 @@ using OpenCvSharp;
 
 public class NetworkScript : MonoBehaviour
 {
+    private String ip = "92.144.127.214"; //ip internet
+    private IPAddress udpAddr;
     private UdpClient udpClientReceiver;
     private UdpClient udpClientSender;
     private TcpClient tcpClientSender;
     private NetworkStream tcpStream;
     private int port = 1250;
-    private String ip = "92.144.127.214"; //ip internet
-    private IPAddress udpAddr;
+
+    void Awake()
+    {
+        DontDestroyOnLoad(transform.gameObject);
+    }
 
     // Use this for initialization
     void Start()
@@ -32,14 +37,17 @@ public class NetworkScript : MonoBehaviour
         this.port = Int32.Parse(GameObject.Find("PortField").GetComponent<InputField>().text);
         Debug.Log("Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
 
-        videoReceive();
+        videoStreamInitialized = true;
+
+        capture = new VideoCapture(0);
+        //videoReceive();
         return (0);
     }
 
     void videoReceive()
     {
         Debug.Log("init receive 1");
-        VideoCapture capture = new VideoCapture("rtsp://192.168.1.12:1935/vod/Grimm.mp4");
+        VideoCapture capture = new VideoCapture(0);
         if (!capture.IsOpened())
             Debug.Log("Failed to open camera");
         int sleepTime = (int)Math.Round(1000 / capture.Fps);
@@ -69,10 +77,49 @@ public class NetworkScript : MonoBehaviour
 
     void Update()
     {
+        if (videoStreamInitialized == true)
+        {
+            if (!sceneInitialized)
+                CheckSceneInitializing();
+            else
+                CheckNewFrame();
+        }
     }
 
     void OnDestroy()
     {
         Debug.Log("On destroy called");
+    }
+
+    //  Made by Max to work 
+    //  TODO : Alex check si tout ca te va
+    private VideoCapture capture;
+    private bool videoStreamInitialized = false;
+    private bool sceneInitialized = false;
+
+    private void CheckSceneInitializing()
+    {
+        if (GameObject.Find("MainSceneManager") != null)
+        {
+            sceneInitialized = true;
+            CheckNewFrame();
+        }
+        else
+        {
+            Debug.Log("Main Scene not yet Loaded");
+        }
+    }
+
+    private void CheckNewFrame()
+    {
+        Mat image = new Mat();
+
+        capture.Grab();
+        NativeMethods.videoio_VideoCapture_operatorRightShift_Mat(capture.CvPtr, image.CvPtr);
+        /**
+        if (image.Empty())
+            break;
+        **/
+       GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>().SetImage(image);
     }
 }
