@@ -6,6 +6,9 @@ using System.Collections;
 
 public class CanvasManagerScript : MonoBehaviour {
 
+    bool DEVSTATUs = false;
+
+
     GameObject canvasObj;
 
     // Use this for initialization
@@ -21,6 +24,11 @@ public class CanvasManagerScript : MonoBehaviour {
     // Set the canvas image to the corresponding Mat
     public void SetImage(Mat mat)
     {
+        if (DEVSTATUs == true)
+        {
+            return;
+        }
+
         if (mat.Height != 1920 || mat.Width != 1080)
             mat = ResizeMatTo1920x1080(mat);
         Debug.Log(System.Environment.Version);
@@ -42,4 +50,40 @@ public class CanvasManagerScript : MonoBehaviour {
         return (mat.ToBytes(".png"));
     }
 
+
+
+    //TODO : DELETE AFTER DEV
+    public void openNewWindow()
+    {
+        DEVSTATUs = true;
+        Debug.Log("init receive 1");
+        VideoCapture capture = new VideoCapture(0);
+        if (!capture.IsOpened())
+            Debug.Log("Failed to open camera");
+        int sleepTime = (int)Math.Round(1000 / capture.Fps);
+        Debug.Log("init receive 2");
+
+        using (var window = new Window("capture"))
+        {
+            // Frame image buffer
+            Mat image = new Mat();
+
+            int i = 0;
+            while (i != 27)
+            {
+                capture.Grab();
+                NativeMethods.videoio_VideoCapture_operatorRightShift_Mat(capture.CvPtr, image.CvPtr);
+                //  capture.Read(image); // same as cvQueryFrame
+                Debug.Log("init receive 3");
+                if (image.Empty())
+                    break;
+                Debug.Log("init receive 4");
+
+                window.ShowImage(image);
+                i = Cv2.WaitKey(10);
+            }
+          window.Close();
+            DEVSTATUs = false;
+        }
+    }
 }

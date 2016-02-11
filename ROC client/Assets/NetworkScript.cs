@@ -120,6 +120,7 @@ public class NetworkScript : MonoBehaviour
         if (image.Empty())
             break;
         **/
-       GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>().SetImage(image);
+        Debug.Log("1");
+        GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>().SetImage(image);
     }
 }
