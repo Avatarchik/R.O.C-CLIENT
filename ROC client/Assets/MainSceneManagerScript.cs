@@ -2,13 +2,11 @@
 using System.Runtime.InteropServices;
 using System.Collections;
 using UnityEngine.UI;
-using OpenCvSharp;
 
 public class MainSceneManagerScript : MonoBehaviour {
 
     bool ingameMenuToggle = false;
     GameObject gameMenu;
-    Mat testMat;
     Texture2D testTexture;
 
     // Use this for initialization

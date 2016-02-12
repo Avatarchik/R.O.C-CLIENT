@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using OpenCvSharp;
 using System;
 using System.Collections;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 
 public class CanvasManagerScript : MonoBehaviour {
 
     bool DEVSTATUs = false;
 
-
     GameObject canvasObj;
 
     // Use this for initialization
     void Start() {
-        canvasObj = GameObject.Find("Image");
+        canvasObj = GameObject.Find("RawImage");
     }
 
     // Update is called once per frame
@@ -24,35 +25,44 @@ public class CanvasManagerScript : MonoBehaviour {
     // Set the canvas image to the corresponding Mat
     public void SetImage(Mat mat)
     {
-        if (DEVSTATUs == true)
-        {
-            return;
+        Debug.Log("ta soeur");
+        Texture2D texture = TextureConvert.ImageToTexture2D(mat.ToImage<Bgr, Byte>(), FlipType.Vertical);
+
+        canvasObj.GetComponent<RawImage>().texture = texture;
+        //GameObject.Find("Image").GetComponent<Image>().sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+    }
+
+
+    /*        if (DEVSTATUs == true)
+            {
+                return;
+            }
+
+            if (mat.Height != 1920 || mat.Width != 1080)
+                mat = ResizeMatTo1920x1080(mat);
+            Debug.Log(System.Environment.Version);
+            Texture2D tempTexture = new Texture2D(mat.Width, mat.Height);
+            tempTexture.LoadImage(MatToByteArray(mat));
+            canvasObj.GetComponent<Image>().sprite = Sprite.Create(tempTexture, new UnityEngine.Rect(0, 0, 1920, 1080), Vector2.zero);
+
+            GameObject.Find("TestText").GetComponent<Text>().text = ((int)(1.0f / Time.deltaTime)).ToString();
         }
 
-        if (mat.Height != 1920 || mat.Width != 1080)
-            mat = ResizeMatTo1920x1080(mat);
-        Debug.Log(System.Environment.Version);
-        Texture2D tempTexture = new Texture2D(mat.Width, mat.Height);
-        tempTexture.LoadImage(MatToByteArray(mat));
-        canvasObj.GetComponent<Image>().sprite = Sprite.Create(tempTexture, new UnityEngine.Rect(0, 0, 1920, 1080), Vector2.zero);
+        private Mat ResizeMatTo1920x1080(Mat mat)
+        {
+            Size size = new Size(1920, 1080);
 
-        GameObject.Find("TestText").GetComponent<Text>().text = ((int)(1.0f / Time.deltaTime)).ToString();
-    }
+            return mat.Resize(size);
+        }
 
-    private Mat ResizeMatTo1920x1080(Mat mat)
-    {
-        Size size = new Size(1920, 1080);
-
-        return mat.Resize(size);
-    }
-
-    private byte[] MatToByteArray(Mat mat) {
-        return (mat.ToBytes(".png"));
-    }
+        private byte[] MatToByteArray(Mat mat) {
+            return (mat.ToBytes(".png"));
+        }*/
 
 
 
     //TODO : DELETE AFTER DEV
+    /*
     public void openNewWindow()
     {
         DEVSTATUs = true;
@@ -85,5 +95,5 @@ public class CanvasManagerScript : MonoBehaviour {
           window.Close();
             DEVSTATUs = false;
         }
-    }
+    }*/
 }
