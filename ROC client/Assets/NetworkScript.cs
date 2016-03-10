@@ -50,6 +50,21 @@ public class NetworkScript : MonoBehaviour
             this.rtspAddr = "rtsp://" + this.ip + ":" + this.port + "/camera_0";
             Debug.Log("rtsp addr is set : " + this.rtspAddr);
         }
+        try
+        {
+            if (this.rtspAddr == null)
+                captureVideo = new Capture(0);
+            else
+                captureVideo = new Capture(this.rtspAddr);
+        }
+        catch (Exception excpt)
+        {
+            //EditorUtility.DisplayDialog("Error", excpt.Message, "ok", "");
+            Debug.Log("capture failed : " + excpt.Message);
+            captureVideo = null;
+            return (-1);
+            //capture fail retourner au menu
+        }
         return (0);
     }
 
@@ -58,20 +73,11 @@ public class NetworkScript : MonoBehaviour
         if (level == 1) {
             canvasScript = GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>();
             mainSceneLoaded = true;
-            try {
-                if (this.rtspAddr == null)
-                    captureVideo = new Capture(0);
-                else
-                    captureVideo = new Capture(this.rtspAddr);
-            }
-            catch (Exception excpt) {
-                EditorUtility.DisplayDialog("Error", excpt.Message, "ok", "");
-                //capture fail retourner au menu
-            }
         }
-        else if (level == 0) {
+        else if (level == 0)
+        {
+            mainSceneLoaded = false;
             if (captureVideo != null) {
-                mainSceneLoaded = false;
                 captureVideo.Dispose();
                 captureVideo = null;
                 this.ip = "127.0.0.1";
@@ -82,7 +88,7 @@ public class NetworkScript : MonoBehaviour
     }
 
     void Update() {
-        if (mainSceneLoaded == true) {
+        if (mainSceneLoaded == true && captureVideo != null) {
             captureVideo.Retrieve(frame, 0);
             canvasScript.SetImage(frame);
         }

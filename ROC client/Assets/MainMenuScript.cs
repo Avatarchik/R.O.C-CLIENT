@@ -25,7 +25,8 @@ public class MainMenuScript : MonoBehaviour {
     {
         if (GameObject.Find("PortField").GetComponent<InputField>().text != "" && GameObject.Find("IpField").GetComponent<InputField>().text != "")
         {
-            networkScript.SetUpNetwork();
+            if (networkScript.SetUpNetwork() == -1)
+                return;
             StartCoroutine("loading");
         }
     }
