@@ -5,6 +5,8 @@ using System.Collections;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using System.IO;
+using System.Drawing;
 
 public class CanvasManagerScript : MonoBehaviour {
 
@@ -25,11 +27,22 @@ public class CanvasManagerScript : MonoBehaviour {
     // Set the canvas image to the corresponding Mat
     public void SetImage(Mat mat)
     {
-        Debug.Log("ta soeur");
         Texture2D texture = TextureConvert.ImageToTexture2D(mat.ToImage<Bgr, Byte>(), FlipType.Vertical);
-
         canvasObj.GetComponent<RawImage>().texture = texture;
-        //GameObject.Find("Image").GetComponent<Image>().sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+    }
+
+    private Texture2D MatToTexture2d(Bitmap bmp, int texturewidth, int textureheight)
+    {
+        Texture2D texture = new Texture2D(1920, 1080);
+
+        MemoryStream ms = new MemoryStream();
+        
+
+       bmp.Save(ms, bmp.RawFormat);
+        texture.LoadImage(ms.ToArray());
+        ms.Close();
+
+        return texture;
     }
 
 

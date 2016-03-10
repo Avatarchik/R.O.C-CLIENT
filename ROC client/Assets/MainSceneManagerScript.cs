@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MainSceneManagerScript : MonoBehaviour {
 
-    bool ingameMenuToggle = false;
+    bool ingameMenuToggle = true;
     GameObject gameMenu;
     Texture2D testTexture;
 
@@ -19,10 +19,15 @@ public class MainSceneManagerScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (Input.GetKeyDown(KeyCode.M)) // M button in key setup
+        if (Input.GetKeyDown(KeyCode.Escape)) // M button in key setup
         {
             ingameMenuToggle = !ingameMenuToggle;
             gameMenu.SetActive(ingameMenuToggle);
         }
+    }
+
+    public void ChangeToMenuScene()
+    {
+        AsyncOperation async = Application.LoadLevelAsync("MenuScene");
     }
 }
