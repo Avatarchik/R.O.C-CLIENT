@@ -63,7 +63,7 @@ public class NetworkScript : MonoBehaviour
         {
             //EditorUtility.DisplayDialog("Error", excpt.Message, "ok", "");
             Debug.Log("capture failed : " + excpt.Message);
-            this.resetCamera();
+            this.clearCamera();
             return (-1);
             //capture fail retourner au menu
         }
@@ -79,11 +79,11 @@ public class NetworkScript : MonoBehaviour
         else if (level == 0)
         {
             mainSceneLoaded = false;
-            this.resetCamera();
+            this.clearCamera();
         }
     }
 
-    void resetCamera()
+    void clearCamera()
     {
         if (captureVideo != null)
         {
@@ -110,4 +110,8 @@ public class NetworkScript : MonoBehaviour
         Debug.Log("On destroy called");
     }
 
+    void OnApplicationQuit()
+    {
+        this.clearCamera();
+    }
 }
