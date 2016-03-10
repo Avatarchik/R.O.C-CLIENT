@@ -26,10 +26,12 @@ public class NetworkScript : MonoBehaviour
     private Mat frame;
     private bool mainSceneLoaded;
     private CanvasManagerScript canvasScript;
+    private static NetworkScript networkScript;
 
 
     void Awake() {
         DontDestroyOnLoad(this);
+
     }
 
     // Use this for initialization
@@ -61,7 +63,7 @@ public class NetworkScript : MonoBehaviour
         {
             //EditorUtility.DisplayDialog("Error", excpt.Message, "ok", "");
             Debug.Log("capture failed : " + excpt.Message);
-            captureVideo = null;
+            this.resetCamera();
             return (-1);
             //capture fail retourner au menu
         }
@@ -77,19 +79,29 @@ public class NetworkScript : MonoBehaviour
         else if (level == 0)
         {
             mainSceneLoaded = false;
-            if (captureVideo != null) {
-                captureVideo.Dispose();
-                captureVideo = null;
-                this.ip = "127.0.0.1";
-                this.port = 0;
-                this.rtspAddr = null;
-            }
+            this.resetCamera();
         }
+    }
+
+    void resetCamera()
+    {
+        if (captureVideo != null)
+        {
+            captureVideo.Dispose();
+            captureVideo = null;
+        }
+        this.ip = "127.0.0.1";
+        this.port = 0;
+        this.rtspAddr = null;
     }
 
     void Update() {
         if (mainSceneLoaded == true && captureVideo != null) {
-            captureVideo.Retrieve(frame, 0);
+            frame = captureVideo.QueryFrame();
+            if (frame != null)
+            {
+                GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>().SetImage(frame);
+            }
             canvasScript.SetImage(frame);
         }
     }
