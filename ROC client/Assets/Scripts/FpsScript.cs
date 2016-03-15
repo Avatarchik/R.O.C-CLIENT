@@ -6,7 +6,6 @@ public class FpsScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
 	}
 
     float deltaTime = 0.0f;

@@ -1,26 +1,21 @@
 ﻿using UnityEngine;
-using System.Runtime.InteropServices;
-using System.Collections;
-using UnityEngine.UI;
+
 
 public class MainSceneManagerScript : MonoBehaviour {
 
-    bool ingameMenuToggle = true;
-    GameObject gameMenu;
-    Texture2D testTexture;
+    //List of GameObjects needed
+    private GameObject gameMenu;
 
-    // Use this for initialization
-    void Start () {
-        testTexture = new Texture2D(1980, 1024);
+    bool ingameMenuToggle = false;
 
+    private void Start () {
         gameMenu = GameObject.Find("Menu");
         gameMenu.SetActive(ingameMenuToggle);
     }
 
-    // Update is called once per frame
-    void Update () {
-        if (Input.GetKeyDown(KeyCode.Escape)) // M button in key setup
-        {
+    //Functions checking that the menu button is not called
+    private void Update () {
+        if (Input.GetKeyDown(KeyCode.Escape)) { // Escape button in key setup
             ingameMenuToggle = !ingameMenuToggle;
             gameMenu.SetActive(ingameMenuToggle);
         }
@@ -28,6 +23,7 @@ public class MainSceneManagerScript : MonoBehaviour {
 
     public void ChangeToMenuScene()
     {
-        AsyncOperation async = Application.LoadLevelAsync("MenuScene");
+        Application.LoadLevel("MenuScene");
     }
+
 }

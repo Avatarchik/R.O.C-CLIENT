@@ -1,55 +1,40 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Configuration;
-using System.Collections.Generic;
-using System.Threading;
-using UnityEditor;
-    
-using Emgu.CV.CvEnum;
-using System.Drawing;
 using Emgu.CV;
-using Emgu.CV.Structure;
-using Emgu.CV.Util;
-using System.Runtime.InteropServices;
-using UnityEngine.UI;
 
 public class NetworkScript : MonoBehaviour
 {
+    private CanvasManagerScript canvasScript;
+
+    //TODO IP and port has to be class members ??? only used in one function
     private String ip = "127.0.0.1"; //ip internet
     private int port = 0;
     private String rtspAddr = null;
+
     private Capture captureVideo = null;
-    private Mat frame;
-    private bool mainSceneLoaded;
-    private CanvasManagerScript canvasScript;
-    private static NetworkScript networkScript;
+    private Mat frame = new Mat();
+    private bool mainSceneLoaded = false;
 
 
-    void Awake() {
+    private void Awake() {
         DontDestroyOnLoad(this);
     }
 
-    // Use this for initialization
-    void Start() {
-        Debug.Log("Start of Network Script");
-        frame = new Mat();
-        mainSceneLoaded = false;
+    private void Start() {
+        Debug.Log("MANAGER : NetworkScript started");
+        Debug.Log("MANAGER : Loading MenuScene");
+        Application.LoadLevel("MenuScene");
     }
 
-    //Method called on connect button click
-    public int SetUpNetwork()
+    //Method called on connect button click, returns -1 upon failure and 0 upon success
+    public int SetUpNetwork(string ip, int port)
     {
-        this.ip = GameObject.Find("IpField").GetComponent<InputField>().text;
-        this.port = Int32.Parse(GameObject.Find("PortField").GetComponent<InputField>().text);
-        Debug.Log("Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
-        if (this.ip.Length > 5 && this.port.ToString().Length > 2)
-        {
+        this.ip = ip;
+        this.port = port;
+        Debug.Log("CONNECTION : Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
+        if (this.ip.Length > 5 && this.port.ToString().Length > 2) { //TODO change implementation of main camera show before release 
             this.rtspAddr = "rtsp://" + this.ip + ":" + this.port + "/camera_0";
-            Debug.Log("rtsp addr is set : " + this.rtspAddr);
+            Debug.Log("CONNECTION : Rtsp address is set : " + this.rtspAddr);
         }
         try
         {
@@ -60,30 +45,35 @@ public class NetworkScript : MonoBehaviour
         }
         catch (Exception excpt)
         {
-            //EditorUtility.DisplayDialog("Error", excpt.Message, "ok", "");
-            Debug.Log("capture failed : " + excpt.Message);
+            Debug.Log("ERROR : Capture failed : " + excpt.Message);
             this.clearCamera();
             return (-1);
-            //capture fail retourner au menu
         }
         return (0);
     }
 
+    public void ResetNetwork()
+    {
+        this.clearCamera();
+    }
+
     // Function automatically called on every script after a level has been loaded
-    void OnLevelWasLoaded(int level) {
+    private void OnLevelWasLoaded(int level) {
+        Debug.Log("LEVEL : Level " + level + " loaded.");
         if (level == 1) {
-            canvasScript = GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>();
-            mainSceneLoaded = true;
-        }
-        else if (level == 0)
-        {
             mainSceneLoaded = false;
             this.clearCamera();
         }
+        else if (level == 2) {
+            mainSceneLoaded = true;
+            canvasScript = GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>();
+        }
     }
 
-    void clearCamera()
+    //Function releasing the camera streams
+    private void clearCamera()
     {
+        Debug.Log("INFO : Capture reset.");
         if (captureVideo != null)
         {
             captureVideo.Dispose();
@@ -94,23 +84,28 @@ public class NetworkScript : MonoBehaviour
         this.rtspAddr = null;
     }
 
-    void Update() {
+    private void Update() {
         if (mainSceneLoaded == true && captureVideo != null) {
-            frame = captureVideo.QueryFrame();
-            if (frame != null)
-            {
-                GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>().SetImage(frame);
+            if ((frame = captureVideo.QueryFrame()) != null) {
+                canvasScript.SetImage(frame);
             }
-            canvasScript.SetImage(frame);
+            else {
+                Debug.Log("ERROR : QueryFrame failed.");
+            }
         }
     }
 
-    void OnDestroy() {
-        Debug.Log("On destroy called");
-    }
-
-    void OnApplicationQuit()
+    // Function automatically called once the application exits, frees the camera
+    private void OnApplicationQuit()
     {
         this.clearCamera();
+    }
+
+    public string GetRtspAddr()
+    {
+        if (this.rtspAddr == null)
+            return "Camera 0";
+        else
+            return this.rtspAddr;
     }
 }
