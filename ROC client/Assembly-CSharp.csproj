@@ -52,7 +52,6 @@
      <Compile Include="Assets\Scripts\CommunicationManagerScript.cs" />
      <Compile Include="Assets\Scripts\DataTransferScript.cs" />
      <Compile Include="Assets\Scripts\FpsScript.cs" />
-     <Compile Include="Assets\Scripts\ImageScript.cs" />
      <Compile Include="Assets\Scripts\MainMenuScript.cs" />
      <Compile Include="Assets\Scripts\MainSceneManagerScript.cs" />
      <Compile Include="Assets\Scripts\MenuScript.cs" />

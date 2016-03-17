@@ -29,6 +29,7 @@ public class NetworkScript : MonoBehaviour
     //Method called on connect button click, returns -1 upon failure and 0 upon success
     public int SetUpNetwork(string ip, int port)
     {
+        //TODO fps optimisation setCaptureProperty
         this.ip = ip;
         this.port = port;
         Debug.Log("CONNECTION : Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
@@ -42,8 +43,10 @@ public class NetworkScript : MonoBehaviour
                 captureVideo = new Capture(0);
             else
                 captureVideo = new Capture(this.rtspAddr);
+            Debug.Log("CAPTURE DONE");
+            Debug.Log("capture= " + captureVideo);
         }
-        catch (Exception excpt)
+        catch (NullReferenceException excpt)
         {
             Debug.Log("ERROR : Capture failed : " + excpt.Message);
             this.clearCamera();
@@ -55,6 +58,12 @@ public class NetworkScript : MonoBehaviour
     public void ResetNetwork()
     {
         this.clearCamera();
+    }
+
+    public void ProcessFrame(object sender, EventArgs e)
+    {
+
+
     }
 
     // Function automatically called on every script after a level has been loaded
@@ -84,14 +93,25 @@ public class NetworkScript : MonoBehaviour
         this.rtspAddr = null;
     }
 
+
     private void Update() {
-        if (mainSceneLoaded == true && captureVideo != null) {
-            if ((frame = captureVideo.QueryFrame()) != null) {
-                canvasScript.SetImage(frame);
+        try
+        {
+            if (mainSceneLoaded == true && captureVideo != null)
+            {
+                if ((frame = captureVideo.QueryFrame()) != null)
+                {
+                    canvasScript.SetImage(frame);
+                }
+                else
+                {
+                    Debug.Log("ERROR : QueryFrame failed.");
+                }
             }
-            else {
-                Debug.Log("ERROR : QueryFrame failed.");
-            }
+        }
+        catch (Exception ee)
+        {
+            Debug.Log("ERROR : QueryFrame Exception.");
         }
     }
 
