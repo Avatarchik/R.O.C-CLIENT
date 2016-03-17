@@ -118,11 +118,35 @@
      <None Include="Assets\UnityTestTools\Examples\IntegrationTestsFrameworkExamples\AngryBotsTests\Shaders\Fx\LaserScope.shader" />
      <None Include="Assets\UnityTestTools\Examples\IntegrationTestsFrameworkExamples\AngryBotsTests\Shaders\BackgroundAndCharacters\SuperSimpleSelfIllumination.shader" />
      <None Include="Assets\UnityTestTools\Examples\IntegrationTestsFrameworkExamples\AngryBotsTests\Shaders\Fx\ParticleBlend.shader" />
+ <Reference Include="UnityEngine.Advertisements">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Analytics">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ </Reference>
+ <Reference Include="Mono.Cecil">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/Mono.Cecil.dll</HintPath>
+ </Reference>
+ <Reference Include="Mono.Cecil.Mdb">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/Mono.Cecil.Mdb.dll</HintPath>
+ </Reference>
+ <Reference Include="nunit.core">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/nunit.core.dll</HintPath>
+ </Reference>
+ <Reference Include="nunit.core.interfaces">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/nunit.core.interfaces.dll</HintPath>
+ </Reference>
+ <Reference Include="nunit.framework">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/nunit.framework.dll</HintPath>
+ </Reference>
+ <Reference Include="System.Drawing">
+ <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/System.Drawing.dll</HintPath>
  </Reference>
  <Reference Include="Emgu.CV.Contrib">
  <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Plugins/Emgu.CV.Contrib.dll</HintPath>
@@ -174,24 +198,6 @@
  </Reference>
  <Reference Include="ZedGraph.resources">
  <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Plugins/ZedGraph.resources.dll</HintPath>
- </Reference>
- <Reference Include="System.Drawing">
- <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/System.Drawing.dll</HintPath>
- </Reference>
- <Reference Include="Mono.Cecil.Mdb">
- <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/Mono.Cecil.Mdb.dll</HintPath>
- </Reference>
- <Reference Include="nunit.framework">
- <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/nunit.framework.dll</HintPath>
- </Reference>
- <Reference Include="nunit.core">
- <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/nunit.core.dll</HintPath>
- </Reference>
- <Reference Include="nunit.core.interfaces">
- <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/nunit.core.interfaces.dll</HintPath>
- </Reference>
- <Reference Include="Mono.Cecil">
- <HintPath>E:/Document/ROCDeveloppement/ROC-Client/ROC client/Assets/Libs/Mono.Cecil.dll</HintPath>
  </Reference>
  <Reference Include="Mono.Cecil">
  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/Mono.Cecil.dll</HintPath>
