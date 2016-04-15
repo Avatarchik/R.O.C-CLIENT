@@ -128,4 +128,10 @@ public class NetworkScript : MonoBehaviour
         else
             return this.rtspAddr;
     }
+
+    public bool GetMainLevel()
+    {
+        return this.mainSceneLoaded;
+    }
+
 }
