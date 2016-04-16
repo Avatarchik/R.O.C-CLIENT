@@ -11,7 +11,7 @@ using NUnit.Framework;
     [Category("Unknown Tests")]
     public void FirstConnectionTest()
     {
-            Assert.AreNotEqual(-1, script.StartGoLink());
+        Assert.AreNotEqual(-1, script.StartGoLink(), "Link could not be established to the go software");
     }
 
 }
