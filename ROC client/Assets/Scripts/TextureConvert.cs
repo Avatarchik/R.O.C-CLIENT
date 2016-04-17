@@ -64,6 +64,7 @@ namespace Emgu.CV
 
             if (typeof(TColor) == typeof(Rgb) && typeof(TDepth) == typeof(Byte))
             {
+                //TODO Memory leak here
                 Texture2D texture = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
                 byte[] data = new byte[size.Width * size.Height * 3];
                 GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
@@ -80,6 +81,7 @@ namespace Emgu.CV
             }
             else //if (typeof(TColor) == typeof(Rgba) && typeof(TDepth) == typeof(Byte))
             {
+                //TODO Memory leak here
                 Texture2D texture = new Texture2D(size.Width, size.Height, TextureFormat.RGBA32, false);
                 byte[] data = new byte[size.Width * size.Height * 4];
                 GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);

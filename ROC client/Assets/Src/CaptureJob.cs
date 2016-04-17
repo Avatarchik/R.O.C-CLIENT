@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using System.Threading;
+
 
 namespace Assets.Src
 {
@@ -12,10 +14,17 @@ namespace Assets.Src
     {
         // Frame in which is stocked the camera video
         // Do not access until isDone is set to true
-        private Mat frame = new Mat();
+        private Mat frame = null;
         public Mat getFrame()
         {
             return frame;
+        }
+
+        public void releaseFrame()
+        {
+            frame.Dispose();
+            frame = null;
+            frame = new Mat();
         }
 
 
@@ -41,24 +50,31 @@ namespace Assets.Src
         }
 
         private Capture captureVideo = null;
-        private System.Threading.Thread m_Thread = null;
+        private Thread m_Thread = null;
         private bool m_IsDone = false;
         private object m_Handle = new object();
        
         public CaptureJob(string rtspAddr)
         {
             captureVideo = new Capture(rtspAddr);
+            frame = new Mat();
+            Debug.Log("new allocate");
         }
 
         public CaptureJob(int rtspAddr)
         {
             captureVideo = new Capture(rtspAddr);
+            frame = new Mat();
+
+            Debug.Log(rtspAddr);
+            Debug.Log("new allocate");
         }
 
         public void Start()
         {
-            m_Thread = new System.Threading.Thread(GetFrame);
+            m_Thread = new System.Threading.Thread(retrieveVideoFrame);
             m_Thread.Start();
+            Debug.Log("new allocate start");
         }
 
         public void Abort()
@@ -68,6 +84,11 @@ namespace Assets.Src
             {
                 captureVideo.Dispose();
                 captureVideo = null;
+            }
+            if (this.frame != null)
+            {
+                this.frame.Dispose();
+                this.frame = null;
             }
         }
 
@@ -79,19 +100,20 @@ namespace Assets.Src
                 return false;
         }
 
-        private void GetFrame()
+        private void retrieveVideoFrame()
         {
-            while (captureVideo != null)
+            while (true)
             {
-                if (isDone == false && (frame = captureVideo.QueryFrame()) == null)
+                if (isDone == false)
                 {
-                    UnityEngine.Debug.Log("ERROR : QueryFrame failed.");
+                    Debug.Log("retrieve frame");
+                    captureVideo.Retrieve(frame, 0);
+                    if (frame != null)
+                    {
+                        isDone = true;
+                    }
                 }
-                else if (frame != null)
-                {
-                    isDone = true;
-                }
-            }
+            };
         }
     }
 }

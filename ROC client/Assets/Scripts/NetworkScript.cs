@@ -13,8 +13,6 @@ public class NetworkScript : MonoBehaviour
     private String rtspAddr = null;
 
     private CaptureJob captureJob;
-    private Capture captureVieo = null;
-    private Mat frame = new Mat();
     private bool mainSceneLoaded = false;
 
 
@@ -82,20 +80,6 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
-    //Function releasing the camera streams
-    private void clearCamera()
-    {
-        Debug.Log("INFO : Capture reset.");
-        if (captureJob != null)
-        {
-            captureJob.Abort();
-            captureJob = null;
-        }
-        this.ip = "127.0.0.1";
-        this.port = 0;
-        this.rtspAddr = null;
-    }
-
 
     private void Update() {
         try
@@ -104,7 +88,12 @@ public class NetworkScript : MonoBehaviour
             {
                 if (captureJob.Update() == true)
                 {
-                    canvasScript.SetImage(captureJob.getFrame());
+                    if (canvasScript.canvasImage.texture)
+                    {
+                        Texture2D.DestroyImmediate(canvasScript.canvasImage.texture, true);
+                    }//Test de release ....
+                    //canvasScript.SetImage(captureJob.getFrame());
+                    captureJob.releaseFrame();
                     captureJob.isDone = false;
                 }
             }
@@ -118,9 +107,23 @@ public class NetworkScript : MonoBehaviour
     // Function automatically called once the application exits, frees the camera
     private void OnApplicationQuit()
     {
+        Debug.Log("Application ending after " + Time.time + " seconds");
         this.clearCamera();
     }
 
+    //Function releasing the camera streams
+    private void clearCamera()
+    {
+        Debug.Log("INFO : Capture reset.");
+        if (captureJob != null)
+        {
+            captureJob.Abort();
+            captureJob = null;
+        }
+        this.ip = "127.0.0.1";
+        this.port = 0;
+        this.rtspAddr = null;
+    }
     public string GetRtspAddr()
     {
         if (this.rtspAddr == null)
