@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using Emgu.CV;
+using Assets.Src;
 
 public class NetworkScript : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class NetworkScript : MonoBehaviour
     private int port = 0;
     private String rtspAddr = null;
 
-    private Capture captureVideo = null;
+    private CaptureJob captureJob;
+    private Capture captureVieo = null;
     private Mat frame = new Mat();
     private bool mainSceneLoaded = false;
 
@@ -40,11 +42,12 @@ public class NetworkScript : MonoBehaviour
         try
         {
             if (this.rtspAddr == null)
-                captureVideo = new Capture(0);
+                captureJob = new CaptureJob(0);
             else
-                captureVideo = new Capture(this.rtspAddr);
+                captureJob = new CaptureJob(this.rtspAddr);
+            captureJob.Start();
             Debug.Log("CAPTURE DONE");
-            Debug.Log("capture= " + captureVideo);
+            Debug.Log("capture= " + captureJob);
         }
         catch (NullReferenceException excpt)
         {
@@ -83,10 +86,10 @@ public class NetworkScript : MonoBehaviour
     private void clearCamera()
     {
         Debug.Log("INFO : Capture reset.");
-        if (captureVideo != null)
+        if (captureJob != null)
         {
-            captureVideo.Dispose();
-            captureVideo = null;
+            captureJob.Abort();
+            captureJob = null;
         }
         this.ip = "127.0.0.1";
         this.port = 0;
@@ -97,19 +100,16 @@ public class NetworkScript : MonoBehaviour
     private void Update() {
         try
         {
-            if (mainSceneLoaded == true && captureVideo != null)
+            if (mainSceneLoaded == true && captureJob != null)
             {
-                if ((frame = captureVideo.QueryFrame()) != null)
+                if (captureJob.Update() == true)
                 {
-                    canvasScript.SetImage(frame);
-                }
-                else
-                {
-                    Debug.Log("ERROR : QueryFrame failed.");
+                    canvasScript.SetImage(captureJob.getFrame());
+                    captureJob.isDone = false;
                 }
             }
         }
-        catch (Exception ee)
+        catch (Exception e)
         {
             Debug.Log("ERROR : QueryFrame Exception.");
         }
