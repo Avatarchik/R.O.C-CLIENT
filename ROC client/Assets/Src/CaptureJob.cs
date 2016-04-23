@@ -72,7 +72,7 @@ namespace Assets.Src
 
         public void Start()
         {
-            m_Thread = new System.Threading.Thread(retrieveVideoFrame);
+            m_Thread = new Thread(retrieveVideoFrame);
             m_Thread.Start();
             Debug.Log("new allocate start");
         }
@@ -106,7 +106,7 @@ namespace Assets.Src
             {
                 if (isDone == false)
                 {
-                    Debug.Log("retrieve frame");
+                   // Debug.Log("retrieve frame");
                     captureVideo.Retrieve(frame, 0);
                     if (frame != null)
                     {

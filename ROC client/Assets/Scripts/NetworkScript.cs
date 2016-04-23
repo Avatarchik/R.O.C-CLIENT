@@ -88,12 +88,13 @@ public class NetworkScript : MonoBehaviour
             {
                 if (captureJob.Update() == true)
                 {
-                    if (canvasScript.canvasImage.texture)
+                  /*  if (canvasScript.canvasImage.texture)
                     {
                         Texture2D.DestroyImmediate(canvasScript.canvasImage.texture, true);
-                    }//Test de release ....
-                    //canvasScript.SetImage(captureJob.getFrame());
-                    captureJob.releaseFrame();
+                    }*/
+                    //Test de release ....
+                    canvasScript.SetImage(captureJob.getFrame(), captureJob.getFrame());
+                   // captureJob.releaseFrame();
                     captureJob.isDone = false;
                 }
             }
@@ -124,6 +125,7 @@ public class NetworkScript : MonoBehaviour
         this.port = 0;
         this.rtspAddr = null;
     }
+
     public string GetRtspAddr()
     {
         if (this.rtspAddr == null)

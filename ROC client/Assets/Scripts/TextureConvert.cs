@@ -14,6 +14,25 @@ namespace Emgu.CV
 {
     public static class TextureConvert
     {
+        private static Texture2D texture = null;
+        private static byte[] data = null;
+
+        private static void initMembers<TColor, TDepth>(Image<TColor, TDepth> image, Size size)
+           where TColor : struct, IColor
+           where TDepth : new()
+        {
+            if (typeof(TColor) == typeof(Rgb) && typeof(TDepth) == typeof(Byte))
+            {
+                texture = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
+                data = new byte[size.Width * size.Height * 3];
+            }
+            else
+            {
+                texture = new Texture2D(size.Width, size.Height, TextureFormat.RGBA32, false);
+                data = new byte[size.Width * size.Height * 4];
+            }
+        }
+
         public static Image<TColor, TDepth> Texture2dToImage<TColor, TDepth>(Texture2D texture, Emgu.CV.CvEnum.FlipType flipType = FlipType.Vertical)
            where TColor : struct, IColor
            where TDepth : new()
@@ -62,11 +81,14 @@ namespace Emgu.CV
         {
             Size size = image.Size;
 
+            if (texture == null)
+                initMembers(image, size);
+
             if (typeof(TColor) == typeof(Rgb) && typeof(TDepth) == typeof(Byte))
             {
                 //TODO Memory leak here
-                Texture2D texture = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
-                byte[] data = new byte[size.Width * size.Height * 3];
+                //             Texture2D texture = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
+                //byte[] data = new byte[size.Width * size.Height * 3];
                 GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
                 using (Image<Rgb, byte> rgb = new Image<Rgb, byte>(size.Width, size.Height, size.Width * 3, dataHandle.AddrOfPinnedObject()))
                 {
@@ -82,8 +104,8 @@ namespace Emgu.CV
             else //if (typeof(TColor) == typeof(Rgba) && typeof(TDepth) == typeof(Byte))
             {
                 //TODO Memory leak here
-                Texture2D texture = new Texture2D(size.Width, size.Height, TextureFormat.RGBA32, false);
-                byte[] data = new byte[size.Width * size.Height * 4];
+                //  Texture2D texture = new Texture2D(size.Width, size.Height, TextureFormat.RGBA32, false);
+                //byte[] data = new byte[size.Width * size.Height * 4];
                 GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
                 using (Image<Rgba, byte> rgba = new Image<Rgba, byte>(size.Width, size.Height, size.Width * 4, dataHandle.AddrOfPinnedObject()))
                 {
@@ -93,7 +115,6 @@ namespace Emgu.CV
                 }
                 dataHandle.Free();
                 texture.LoadRawTextureData(data);
-
                 texture.Apply();
                 return texture;
             }
