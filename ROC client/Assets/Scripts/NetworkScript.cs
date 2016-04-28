@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Emgu.CV;
 using Assets.Src;
@@ -13,11 +14,8 @@ public class NetworkScript : MonoBehaviour
     private int port = 0;
     private String rtspAddr = null;
 
-    private CaptureJob captureJob1 = null;
-    private CaptureJob captureJob2 = null;
+    private List<CaptureJob> _captureList = null;
     private bool mainSceneLoaded = false;
-    EventWaitHandle _wh1 = new AutoResetEvent(false);
-    EventWaitHandle _wh2 = new AutoResetEvent(false);
 
 
     private void Awake() {
@@ -43,21 +41,21 @@ public class NetworkScript : MonoBehaviour
         }
         try
         {
+            _captureList = new List<CaptureJob>();
             if (this.rtspAddr == null)
             {
-                captureJob1 = new CaptureJob(0, _wh1);
-                captureJob2 = new CaptureJob(1, _wh2);
-
-                captureJob1.Start();
-                captureJob2.Start();
+                _captureList.Add(new CaptureJob(0));
+                _captureList.Add(new CaptureJob(1));
             }
             else
             {
-                captureJob1 = new CaptureJob(this.rtspAddr, _wh1);
-                captureJob1.Start();
+                _captureList.Add(new CaptureJob(this.rtspAddr));
+            }
+            foreach (CaptureJob captureJob in _captureList)
+            {
+                captureJob.Start();
             }
             Debug.Log("CAPTURE DONE");
-            Debug.Log("capture= " + captureJob1);
         }
         catch (NullReferenceException excpt)
         {
@@ -96,67 +94,19 @@ public class NetworkScript : MonoBehaviour
     private void Update() {
         try
         {
-            if (mainSceneLoaded == true && captureJob1 != null )
+            if (mainSceneLoaded == true)
             {
-                if (captureJob1.Update() == true)
+                for (int i = 0; i < _captureList.Count; i++) // Loop with for.
                 {
-                    /*  if (canvasScript.canvasImage.texture)
-                      {
-                          Texture2D.DestroyImmediate(canvasScript.canvasImage.texture, true);
-                      }*/
-                    //Test de release ....
-                    canvasScript.SetImage1(captureJob1.getFrame());
-                    // captureJob.releaseFrame();
-                    captureJob1.isDone = false;
-                    this._wh1.Set();
+                    if (_captureList[i].Update() == true)
+                    {
+                        canvasScript.SetImage(i, _captureList[i].getFrame());
+                        // captureJob.releaseFrame();
+                        _captureList[i].isDone = false;
+                        _captureList[i].NewItemEvent.Set();
+                    }
                 }
             }
-            if (mainSceneLoaded == true && captureJob2 != null)
-            {
-                if (captureJob2.Update() == true)
-                {
-                    /*  if (canvasScript.canvasImage.texture)
-                      {
-                          Texture2D.DestroyImmediate(canvasScript.canvasImage.texture, true);
-                      }*/
-                    //Test de release ....
-                    canvasScript.SetImage2(captureJob2.getFrame());
-                    // captureJob.releaseFrame();
-                    captureJob2.isDone = false;
-                    this._wh2.Set();
-                }
-            }
-            //if (mainSceneLoaded == true && captureJob1 != null && captureJob2 != null)
-            //{
-            //    Debug.Log("viens ici");
-            //    if (captureJob1.Update() == true && captureJob2.Update() == true)
-            //    {
-            //      /*  if (canvasScript.canvasImage.texture)
-            //        {
-            //            Texture2D.DestroyImmediate(canvasScript.canvasImage.texture, true);
-            //        }*/
-            //        //Test de release ....
-            //        canvasScript.SetImage(captureJob1.getFrame(), captureJob2.getFrame());
-            //       // captureJob.releaseFrame();
-            //        captureJob1.isDone = false;
-            //        captureJob2.isDone = false;
-            //    }
-            //}
-            //else if (mainSceneLoaded == true && captureJob1 != null)
-            //{
-            //    Debug.Log("pk ici ?");
-            //    if (captureJob1.Update() == true)
-            //    {
-            //        /*  if (canvasScript.canvasImage.texture)
-            //          {
-            //              Texture2D.DestroyImmediate(canvasScript.canvasImage.texture, true);
-            //          }*/
-            //        //Test de release ....
-            //        canvasScript.SetImage(captureJob1.getFrame(), captureJob1.getFrame());
-            //        // captureJob.releaseFrame();
-            //        captureJob1.isDone = false;
-            //    }
-            //}
         }
         catch (Exception e)
         {
@@ -175,16 +125,14 @@ public class NetworkScript : MonoBehaviour
     private void clearCamera()
     {
         Debug.Log("INFO : Capture reset.");
-        if (captureJob1 != null)
+        if (_captureList != null)
         {
-            captureJob1.Abort();
-            captureJob1 = null;
+            for (int i = 0; i < _captureList.Count; i++) // Loop with for.
+            {
+                _captureList[i].Abort();
+            }
         }
-        if (captureJob2 != null)
-        {
-            captureJob2.Abort();
-            captureJob2 = null;
-        }
+        _captureList = null;
         this.ip = "127.0.0.1";
         this.port = 0;
         this.rtspAddr = null;

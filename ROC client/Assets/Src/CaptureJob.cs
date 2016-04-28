@@ -53,19 +53,36 @@ namespace Assets.Src
         private Thread m_Thread = null;
         private bool m_IsDone = false;
         private object m_Handle = new object();
-        EventWaitHandle _wh = null;
+        public EventWaitHandle _newItemEvent = null;
+        public ManualResetEvent _exitThreadEvent = null;
 
-        public CaptureJob(string rtspAddr, EventWaitHandle wh)
+        public EventWaitHandle ExitThreadEvent
         {
-            this._wh = wh;
+            get { return _exitThreadEvent; }
+        }
+        public EventWaitHandle NewItemEvent
+        {
+            get { return _newItemEvent; }
+        }
+
+        public void initEvent()
+        {
+            _newItemEvent = new AutoResetEvent(false);
+            _exitThreadEvent = new ManualResetEvent(false);
+        }
+
+        public CaptureJob(string rtspAddr)
+        {
+            this.initEvent();
+
             captureVideo = new Capture(rtspAddr);
             frame = new Mat();
             Debug.Log("new allocate");
         }
 
-        public CaptureJob(int rtspAddr, EventWaitHandle wh)
+        public CaptureJob(int rtspAddr)
         {
-            this._wh = wh;
+            this.initEvent();
             captureVideo = new Capture(rtspAddr);
             frame = new Mat();
 
@@ -82,12 +99,14 @@ namespace Assets.Src
 
         public void Abort()
         {
+            _exitThreadEvent.Set();
             if (captureVideo != null)
             {
                 captureVideo.Dispose();
                 captureVideo = null;
             }
-            _wh.Close();
+            _exitThreadEvent.Close();
+            _newItemEvent.Close();
             if (this.frame != null)
             {
                 this.frame.Dispose();
@@ -105,7 +124,7 @@ namespace Assets.Src
 
         private void retrieveVideoFrame()
         {
-            while (captureVideo != null)
+            while (_exitThreadEvent.WaitOne(0, false) || captureVideo != null)
             {
                 if (isDone == false)
                 {
@@ -117,7 +136,7 @@ namespace Assets.Src
                     }
                 }
                 else
-                    _wh.WaitOne();
+                    _newItemEvent.WaitOne();
             };
         }
     }
