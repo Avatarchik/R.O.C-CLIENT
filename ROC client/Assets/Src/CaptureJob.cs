@@ -79,7 +79,6 @@ namespace Assets.Src
 
         public void Abort()
         {
-            m_Thread.Abort();
             if (captureVideo != null)
             {
                 captureVideo.Dispose();
@@ -102,7 +101,7 @@ namespace Assets.Src
 
         private void retrieveVideoFrame()
         {
-            while (true)
+            while (captureVideo != null)
             {
                 if (isDone == false)
                 {

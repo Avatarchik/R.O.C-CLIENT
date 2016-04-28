@@ -22,9 +22,9 @@ public class CanvasManagerScript : MonoBehaviour {
     }
 
     // Set the canvas image to the corresponding Mat
-    public Boolean SetImage(Mat mat)
+    public Boolean SetImage1(Mat mat)
     {
-        Texture2D temp = TextureConvert.ImageToTexture2D(mat.ToImage<Bgr, Byte>(), FlipType.Vertical);
+        Texture2D temp = TextureConvert.Image1ToTexture2D(mat.ToImage<Bgr, Byte>(), FlipType.Vertical);
 
         if (temp == null)
             return false;
@@ -36,10 +36,24 @@ public class CanvasManagerScript : MonoBehaviour {
         return false;
     }
 
+    public Boolean SetImage2(Mat mat)
+    {
+        Texture2D temp2 = TextureConvert.Image2ToTexture2D(mat.ToImage<Bgr, Byte>(), FlipType.Vertical);
+
+        if (temp2 == null)
+            return false;
+        else
+        {
+            canvasImage2.texture = temp2;
+            return true;
+        }
+        return false;
+    }
+
     public Boolean SetImage(Mat mat, Mat mat2)
     {
-        Texture2D temp = TextureConvert.ImageToTexture2D(mat.ToImage<Bgr, Byte>(), FlipType.Vertical);
-        Texture2D temp2 = TextureConvert.ImageToTexture2D(mat2.ToImage<Bgr, Byte>(), FlipType.Vertical);
+        Texture2D temp = TextureConvert.Image1ToTexture2D(mat.ToImage<Bgr, Byte>(), FlipType.Vertical);
+        Texture2D temp2 = TextureConvert.Image2ToTexture2D(mat2.ToImage<Bgr, Byte>(), FlipType.Vertical);
 
         if (temp == null || temp2 == null)
             return false;

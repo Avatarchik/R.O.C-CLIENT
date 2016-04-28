@@ -14,7 +14,8 @@ namespace Emgu.CV
 {
     public static class TextureConvert
     {
-        private static Texture2D texture = null;
+        private static Texture2D texture1 = null;
+        private static Texture2D texture2 = null;
         private static byte[] data = null;
 
         private static void initMembers<TColor, TDepth>(Image<TColor, TDepth> image, Size size)
@@ -23,12 +24,14 @@ namespace Emgu.CV
         {
             if (typeof(TColor) == typeof(Rgb) && typeof(TDepth) == typeof(Byte))
             {
-                texture = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
+                texture1 = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
+                texture2 = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
                 data = new byte[size.Width * size.Height * 3];
             }
             else
             {
-                texture = new Texture2D(size.Width, size.Height, TextureFormat.RGBA32, false);
+                texture1 = new Texture2D(size.Width, size.Height, TextureFormat.RGBA32, false);
+                texture2 = new Texture2D(size.Width, size.Height, TextureFormat.RGBA32, false);
                 data = new byte[size.Width * size.Height * 4];
             }
         }
@@ -75,13 +78,13 @@ namespace Emgu.CV
             return result;
         }
 
-        public static Texture2D ImageToTexture2D<TColor, TDepth>(Image<TColor, TDepth> image, Emgu.CV.CvEnum.FlipType flipType = FlipType.Vertical)
+        public static Texture2D Image1ToTexture2D<TColor, TDepth>(Image<TColor, TDepth> image, Emgu.CV.CvEnum.FlipType flipType = FlipType.Vertical)
            where TColor : struct, IColor
            where TDepth : new()
         {
             Size size = image.Size;
 
-            if (texture == null)
+            if (texture1 == null)
                 initMembers(image, size);
 
             if (typeof(TColor) == typeof(Rgb) && typeof(TDepth) == typeof(Byte))
@@ -97,9 +100,9 @@ namespace Emgu.CV
                         CvInvoke.Flip(rgb, rgb, flipType);
                 }
                 dataHandle.Free();
-                texture.LoadRawTextureData(data);
-                texture.Apply();
-                return texture;
+                texture1.LoadRawTextureData(data);
+                texture1.Apply();
+                return texture1;
             }
             else //if (typeof(TColor) == typeof(Rgba) && typeof(TDepth) == typeof(Byte))
             {
@@ -114,9 +117,56 @@ namespace Emgu.CV
                         CvInvoke.Flip(rgba, rgba, flipType);
                 }
                 dataHandle.Free();
-                texture.LoadRawTextureData(data);
-                texture.Apply();
-                return texture;
+                texture1.LoadRawTextureData(data);
+                texture1.Apply();
+                return texture1;
+            }
+
+            //return null;
+        }
+
+        public static Texture2D Image2ToTexture2D<TColor, TDepth>(Image<TColor, TDepth> image, Emgu.CV.CvEnum.FlipType flipType = FlipType.Vertical)
+           where TColor : struct, IColor
+           where TDepth : new()
+        {
+            Size size = image.Size;
+
+            if (texture2 == null)
+                initMembers(image, size);
+
+            if (typeof(TColor) == typeof(Rgb) && typeof(TDepth) == typeof(Byte))
+            {
+                //TODO Memory leak here
+                //             Texture2D texture = new Texture2D(size.Width, size.Height, TextureFormat.RGB24, false);
+                //byte[] data = new byte[size.Width * size.Height * 3];
+                GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+                using (Image<Rgb, byte> rgb = new Image<Rgb, byte>(size.Width, size.Height, size.Width * 3, dataHandle.AddrOfPinnedObject()))
+                {
+                    rgb.ConvertFrom(image);
+                    if (flipType != FlipType.None)
+                        CvInvoke.Flip(rgb, rgb, flipType);
+                }
+                dataHandle.Free();
+                texture2.LoadRawTextureData(data);
+                texture2.Apply();
+                return texture2;
+            }
+            else //if (typeof(TColor) == typeof(Rgba) && typeof(TDepth) == typeof(Byte))
+            {
+                //TODO Memory leak here
+                //  Texture2D texture = new Texture2D(size.Width, size.Height, TextureFormat.RGBA32, false);
+                //byte[] data = new byte[size.Width * size.Height * 4];
+                GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+                using (Image<Rgba, byte> rgba = new Image<Rgba, byte>(size.Width, size.Height, size.Width * 4, dataHandle.AddrOfPinnedObject()))
+                {
+                    rgba.ConvertFrom(image);
+                    if (flipType != FlipType.None)
+                        CvInvoke.Flip(rgba, rgba, flipType);
+                }
+                dataHandle.Free();
+                texture2.LoadRawTextureData(data);
+                texture2.Apply();
+                return texture2;
             }
 
             //return null;
