@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Threading;
 using Emgu.CV;
 using Assets.Src;
 
@@ -15,6 +16,8 @@ public class NetworkScript : MonoBehaviour
     private CaptureJob captureJob1 = null;
     private CaptureJob captureJob2 = null;
     private bool mainSceneLoaded = false;
+    EventWaitHandle _wh1 = new AutoResetEvent(false);
+    EventWaitHandle _wh2 = new AutoResetEvent(false);
 
 
     private void Awake() {
@@ -42,15 +45,15 @@ public class NetworkScript : MonoBehaviour
         {
             if (this.rtspAddr == null)
             {
-                captureJob1 = new CaptureJob(0);
-                captureJob2 = new CaptureJob(0);
+                captureJob1 = new CaptureJob(0, _wh1);
+                captureJob2 = new CaptureJob(1, _wh2);
 
                 captureJob1.Start();
                 captureJob2.Start();
             }
             else
             {
-                captureJob1 = new CaptureJob(this.rtspAddr);
+                captureJob1 = new CaptureJob(this.rtspAddr, _wh1);
                 captureJob1.Start();
             }
             Debug.Log("CAPTURE DONE");
@@ -105,6 +108,7 @@ public class NetworkScript : MonoBehaviour
                     canvasScript.SetImage1(captureJob1.getFrame());
                     // captureJob.releaseFrame();
                     captureJob1.isDone = false;
+                    this._wh1.Set();
                 }
             }
             if (mainSceneLoaded == true && captureJob2 != null)
@@ -119,6 +123,7 @@ public class NetworkScript : MonoBehaviour
                     canvasScript.SetImage2(captureJob2.getFrame());
                     // captureJob.releaseFrame();
                     captureJob2.isDone = false;
+                    this._wh2.Set();
                 }
             }
             //if (mainSceneLoaded == true && captureJob1 != null && captureJob2 != null)

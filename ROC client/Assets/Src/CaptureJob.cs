@@ -53,16 +53,19 @@ namespace Assets.Src
         private Thread m_Thread = null;
         private bool m_IsDone = false;
         private object m_Handle = new object();
-       
-        public CaptureJob(string rtspAddr)
+        EventWaitHandle _wh = null;
+
+        public CaptureJob(string rtspAddr, EventWaitHandle wh)
         {
+            this._wh = wh;
             captureVideo = new Capture(rtspAddr);
             frame = new Mat();
             Debug.Log("new allocate");
         }
 
-        public CaptureJob(int rtspAddr)
+        public CaptureJob(int rtspAddr, EventWaitHandle wh)
         {
+            this._wh = wh;
             captureVideo = new Capture(rtspAddr);
             frame = new Mat();
 
@@ -84,6 +87,7 @@ namespace Assets.Src
                 captureVideo.Dispose();
                 captureVideo = null;
             }
+            _wh.Close();
             if (this.frame != null)
             {
                 this.frame.Dispose();
@@ -112,6 +116,8 @@ namespace Assets.Src
                         isDone = true;
                     }
                 }
+                else
+                    _wh.WaitOne();
             };
         }
     }
