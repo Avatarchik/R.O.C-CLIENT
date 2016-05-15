@@ -13,7 +13,7 @@ public class NetworkScript : MonoBehaviour
     private String ip = "127.0.0.1"; //ip internet
     private int port = 0;
     private String rtspAddr = null;
-    private String rtspAddr1 = null;
+    private int _nbCamera = 2;
 
     private List<CaptureJob> _captureList = null;
     private bool mainSceneLoaded = false;
@@ -37,22 +37,18 @@ public class NetworkScript : MonoBehaviour
         this.port = port;
         Debug.Log("CONNECTION : Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
         if (this.ip.Length > 5 && this.port.ToString().Length > 2) { //TODO change implementation of main camera show before release 
-            this.rtspAddr = "rtsp://" + this.ip + ":" + this.port + "/camera_0";
-            this.rtspAddr1 = "rtsp://" + this.ip + ":" + this.port + "/camera_1";
+            this.rtspAddr = "rtsp://" + this.ip + ":" + this.port;
             Debug.Log("CONNECTION : Rtsp address is set : " + this.rtspAddr);
         }
         try
         {
             _captureList = new List<CaptureJob>();
-            if (this.rtspAddr == null)
+            for (int i = 0; i < _nbCamera; i++) // Loop with for.
             {
-                _captureList.Add(new CaptureJob(0));
-                _captureList.Add(new CaptureJob(1));
-            }
-            else
-            {
-                _captureList.Add(new CaptureJob(this.rtspAddr));
-                _captureList.Add(new CaptureJob(this.rtspAddr1));
+                if (this.rtspAddr == null)
+                    _captureList.Add(new CaptureJob(0));
+                else
+                    _captureList.Add(new CaptureJob(this.rtspAddr + "/camera_" + i));
             }
             foreach (CaptureJob captureJob in _captureList)
             {
@@ -139,7 +135,6 @@ public class NetworkScript : MonoBehaviour
         this.ip = "127.0.0.1";
         this.port = 0;
         this.rtspAddr = null;
-        this.rtspAddr1 = null;
     }
 
     public string GetRtspAddr()
