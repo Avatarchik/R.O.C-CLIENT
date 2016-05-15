@@ -13,7 +13,7 @@ public class NetworkScript : MonoBehaviour
     private String ip = "127.0.0.1"; //ip internet
     private int port = 0;
     private String rtspAddr = null;
-    private int _nbCamera = 2;
+    private int _nbCamera = 1;
 
     private List<CaptureJob> _captureList = null;
     private bool mainSceneLoaded = false;
