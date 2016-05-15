@@ -77,16 +77,17 @@ namespace Assets.Src
 
             captureVideo = new Capture(rtspAddr);
             frame = new Mat();
-            Debug.Log("new allocate");
+            Debug.Log(rtspAddr);
+            Debug.Log("new allocate");         
         }
 
-        public CaptureJob(int rtspAddr)
+        public CaptureJob(int camera)
         {
             this.initEvent();
-            captureVideo = new Capture(rtspAddr);
-            frame = new Mat();
 
-            Debug.Log(rtspAddr);
+            captureVideo = new Capture(camera);
+            frame = new Mat();
+            Debug.Log(camera);
             Debug.Log("new allocate");
         }
 
@@ -128,12 +129,9 @@ namespace Assets.Src
             {
                 if (isDone == false)
                 {
-                   // Debug.Log("retrieve frame");
-                    captureVideo.Retrieve(frame, 0);
-                    if (frame != null)
-                    {
-                        isDone = true;
-                    }
+                    // Debug.Log("retrieve frame");
+                    frame = captureVideo.QueryFrame();
+                    isDone = true;
                 }
                 else
                     _newItemEvent.WaitOne();

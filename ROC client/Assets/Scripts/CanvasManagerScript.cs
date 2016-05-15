@@ -30,7 +30,9 @@ public class CanvasManagerScript : MonoBehaviour {
         Texture2D temp = TextureConvert.ImageToTexture2D(index, mat.ToImage<Bgr, Byte>(), FlipType.Vertical);
 
         if (temp == null)
+        {
             return false;
+        }
         else
         {
             _canvasImage[index].texture = temp;
