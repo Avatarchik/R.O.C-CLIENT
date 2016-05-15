@@ -54,9 +54,9 @@ public class GoogleMap : MonoBehaviour
 #endif
 		qs += "&sensor=" + (usingSensor ? "true" : "false");
 		
-		foreach (var i in markers) {
-			qs += "&markers=" + string.Format ("size:{0}|color:{1}|label:{2}", i.size.ToString ().ToLower (), i.color, i.label);
-			foreach (var loc in i.locations) {
+		foreach (var marker in markers) {
+			qs += "&markers=" + string.Format ("size:{0}|color:{1}|label:{2}", marker.size.ToString().ToLower(), marker.color, marker.label);
+			foreach (var loc in marker.locations) {
 				if (loc.address != "")
 					qs += "|" + WWW.UnEscapeURL (loc.address);
 				else
@@ -64,10 +64,10 @@ public class GoogleMap : MonoBehaviour
 			}
 		}
 		
-		foreach (var i in paths) {
-			qs += "&path=" + string.Format ("weight:{0}|color:{1}", i.weight, i.color);
-			if(i.fill) qs += "|fillcolor:" + i.fillColor;
-			foreach (var loc in i.locations) {
+		foreach (var path in paths) {
+			qs += "&path=" + string.Format ("weight:{0}|color:{1}", path.weight, path.color);
+			if(path.fill) qs += "|fillcolor:" + path.fillColor;
+			foreach (var loc in path.locations) {
 				if (loc.address != "")
 					qs += "|" + WWW.UnEscapeURL (loc.address);
 				else
@@ -75,8 +75,14 @@ public class GoogleMap : MonoBehaviour
 			}
 		}
 
-
+        // url = "http://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge," +
+        //            "New+York,NY&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794" +
+        //            "&markers=color:green%7Clabel:G%7C40.711614,-74.012318" +
+        //            "&markers=color:red%7Ccolor:red%7Clabel:C%7C40.718217,-73.998284" +
+        //            "&sensor=false";
+        //var req = new WWW(url);
         var req = new WWW(url + "?" + qs);
+        Debug.Log(qs);
         yield return req;
 //        GetComponent<RawImage>().material.mainTexture = req.texture;
         GetComponent<RawImage>().texture = req.texture;
