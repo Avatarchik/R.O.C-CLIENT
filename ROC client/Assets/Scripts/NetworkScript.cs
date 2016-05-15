@@ -113,7 +113,7 @@ public class NetworkScript : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("ERROR : QueryFrame Exception.");
+            Debug.Log("ERROR : QueryFrame Exception." + e.Message);
         }
     }
 

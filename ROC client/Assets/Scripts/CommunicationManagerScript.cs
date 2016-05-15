@@ -7,6 +7,7 @@ public class CommunicationManagerScript : MonoBehaviour {
     //List of GameObjects needed
     private MovementScript movementScript = null;
     private PositionScript positionScript = null;
+    private GPSScript gpsScript = null;
 
     private string ip = "127.0.0.1";
     private int port = 37807;
@@ -39,7 +40,6 @@ public class CommunicationManagerScript : MonoBehaviour {
 
     public int StartGoLink()
     {
-        // TODO reimplement golink writing and reading
         try
         {
             Debug.Log("CONNECTION : Try connect GO with : " + this.ip + " , " + this.port);
@@ -89,11 +89,19 @@ public class CommunicationManagerScript : MonoBehaviour {
         {
             movementScript = GameObject.Find("MovementObject").GetComponent<MovementScript>();
             positionScript = GameObject.Find("PositionObject").GetComponent<PositionScript>();
+            gpsScript = GameObject.Find("GPSObject").GetComponent<GPSScript>();
+            this.SetGpsCoordinates((float)48.8505248, (float)2.346743);
         }
     }
 
     private void OnApplicationQuit()
     {
         this.StopGoLink();
+    }
+
+    private void SetGpsCoordinates(float x, float y)
+    {
+        gpsScript.SetGpsMap(x, y);
+        gpsScript.RefreshGpsPosition();
     }
 }

@@ -3,7 +3,6 @@ using System.Collections;
 
 public class MenuScript : MonoBehaviour {
 
-    private GameObject gpsMenu;
     private GameObject gyroscopeObject;
     private GameObject movementObject;
 

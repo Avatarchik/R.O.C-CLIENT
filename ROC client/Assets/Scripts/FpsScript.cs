@@ -19,7 +19,8 @@ public class FpsScript : MonoBehaviour {
     {
         float msec = deltaTime * 1000.0f;
         float fps = 1.0f / deltaTime;
-        GetComponent<Text>().text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
+        GameObject.Find("FPSText").GetComponent<Text>().text = string.Format("FPS : {0:0.}", fps);
+        GameObject.Find("MSText").GetComponent<Text>().text = string.Format("MS : {0:0.0}", msec);
     }
 
 

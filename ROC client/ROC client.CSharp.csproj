@@ -137,6 +137,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GPSScript.cs" />
     <Compile Include="Assets\GoogleMaps\Scripts\GoogleMap.cs" />
     <Compile Include="Assets\ProgressBar\Script\ProgressBarBehaviour.cs" />
     <Compile Include="Assets\ProgressBar\Script\ProgressRadialBehaviour.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Assets\Scripts\NetworkScript.cs" />
     <Compile Include="Assets\Scripts\PositionScript.cs" />
     <Compile Include="Assets\Scripts\TextureConvert.cs" />
+    <Compile Include="Assets\Src\CaptureJob.cs" />
     <Compile Include="Assets\UnityTestTools\Assertions\AssertionComponent.cs" />
     <Compile Include="Assets\UnityTestTools\Assertions\AssertionException.cs" />
     <Compile Include="Assets\UnityTestTools\Assertions\Assertions.cs" />
