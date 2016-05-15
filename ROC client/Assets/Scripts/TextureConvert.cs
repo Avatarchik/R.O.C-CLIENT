@@ -28,7 +28,6 @@ namespace Emgu.CV
             //    data = new byte[size.Width * size.Height * 3];
             //else
                 data = new byte[size.Width * size.Height * 4];
-            Debug.Log("toto  fredfdd");
             for (int i = 0; i < _nbTexture; i++)
             {
                 Debug.Log(i);
