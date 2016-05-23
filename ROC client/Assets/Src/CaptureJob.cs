@@ -50,6 +50,8 @@ namespace Assets.Src
         }
 
         private Capture captureVideo = null;
+        private String _rtspAddr = null;
+        private int _cameraDevice = -1;
         private Thread m_Thread = null;
         private bool m_IsDone = false;
         private object m_Handle = new object();
@@ -75,17 +77,18 @@ namespace Assets.Src
         {
             this.initEvent();
 
-            captureVideo = new Capture(rtspAddr);
+            this._rtspAddr = rtspAddr;
+            captureVideo = new Capture(this._rtspAddr);
             frame = new Mat();
             Debug.Log(rtspAddr);
-            Debug.Log("new allocate");         
+            Debug.Log("new allocate");
         }
 
         public CaptureJob(int camera)
         {
             this.initEvent();
-
-            captureVideo = new Capture(camera);
+            this._cameraDevice = camera;
+            captureVideo = new Capture(this._cameraDevice);
             frame = new Mat();
             Debug.Log(camera);
             Debug.Log("new allocate");
@@ -98,7 +101,7 @@ namespace Assets.Src
             Debug.Log("new allocate start");
         }
 
-        public void Abort()
+        public void ReleaseCamera()
         {
             _exitThreadEvent.Set();
             if (captureVideo != null)
@@ -127,14 +130,22 @@ namespace Assets.Src
         {
             while (_exitThreadEvent.WaitOne(0, false) || captureVideo != null)
             {
-                if (isDone == false)
+                try
                 {
-                    // Debug.Log("retrieve frame");
-                    frame = captureVideo.QueryFrame();
-                    isDone = true;
+                    if (isDone == false)
+                    {
+                        frame = null;
+                        // Debug.Log("retrieve frame");
+                        frame = captureVideo.QueryFrame();
+                        isDone = true;
+                    }
+                    else
+                        _newItemEvent.WaitOne();
                 }
-                else
-                    _newItemEvent.WaitOne();
+                catch (Exception ex)
+                {
+                    Debug.Log("CAMERA EXCEPTION");
+                }
             };
         }
     }

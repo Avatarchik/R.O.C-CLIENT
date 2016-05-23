@@ -13,17 +13,19 @@ public class NetworkScript : MonoBehaviour
     private String ip = "127.0.0.1"; //ip internet
     private int port = 0;
     private String rtspAddr = null;
-    private int _nbCamera = 1;
+    private int _nbCamera = 2;
 
     private List<CaptureJob> _captureList = null;
     private bool mainSceneLoaded = false;
 
 
-    private void Awake() {
+    private void Awake()
+    {
         DontDestroyOnLoad(this);
     }
 
-    private void Start() {
+    private void Start()
+    {
         Debug.Log("MANAGER : NetworkScript started");
         Debug.Log("MANAGER : Loading MenuScene");
         Application.LoadLevel("MenuScene");
@@ -36,19 +38,22 @@ public class NetworkScript : MonoBehaviour
         this.ip = ip;
         this.port = port;
         Debug.Log("CONNECTION : Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
-        if (this.ip.Length > 5 && this.port.ToString().Length > 2) { //TODO change implementation of main camera show before release 
-            this.rtspAddr = "rtsp://" + this.ip + ":" + this.port;
+        if (this.ip.Length > 5 && this.port.ToString().Length > 2)
+        { //TODO change implementation of main camera show before release 
+            this.rtspAddr = "rtsp://" + this.ip + ":";
             Debug.Log("CONNECTION : Rtsp address is set : " + this.rtspAddr);
         }
         try
         {
+            CvInvoke.UseOpenCL = false;
             _captureList = new List<CaptureJob>();
             for (int i = 0; i < _nbCamera; i++) // Loop with for.
             {
+                this.port += i;
                 if (this.rtspAddr == null)
-                    _captureList.Add(new CaptureJob(0));
+                    _captureList.Add(new CaptureJob(i));
                 else
-                    _captureList.Add(new CaptureJob(this.rtspAddr + "/camera_" + i));
+                    _captureList.Add(new CaptureJob(this.rtspAddr + this.port + "/camera_" + i));
             }
             foreach (CaptureJob captureJob in _captureList)
             {
@@ -70,27 +75,25 @@ public class NetworkScript : MonoBehaviour
         this.clearCamera();
     }
 
-    public void ProcessFrame(object sender, EventArgs e)
-    {
-
-
-    }
-
     // Function automatically called on every script after a level has been loaded
-    private void OnLevelWasLoaded(int level) {
+    private void OnLevelWasLoaded(int level)
+    {
         Debug.Log("LEVEL : Level " + level + " loaded.");
-        if (level == 1) {
+        if (level == 1)
+        {
             mainSceneLoaded = false;
             this.clearCamera();
         }
-        else if (level == 2) {
+        else if (level == 2)
+        {
             mainSceneLoaded = true;
             canvasScript = GameObject.Find("MainSceneManager").GetComponent<CanvasManagerScript>();
         }
     }
 
 
-    private void Update() {
+    private void Update()
+    {
         try
         {
             if (mainSceneLoaded == true)
@@ -128,7 +131,8 @@ public class NetworkScript : MonoBehaviour
         {
             for (int i = 0; i < _captureList.Count; i++) // Loop with for.
             {
-                _captureList[i].Abort();
+                _captureList[i]._exitThreadEvent.Set();
+                _captureList[i].ReleaseCamera();
             }
         }
         _captureList = null;
