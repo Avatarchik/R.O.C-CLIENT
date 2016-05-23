@@ -38,8 +38,12 @@ public class NetworkScript : MonoBehaviour
         this.ip = ip;
         this.port = port;
         Debug.Log("CONNECTION : Try connect sender with :\nIP : " + this.ip + "\nPORT : " + this.port);
-        if (this.ip.Length > 5 && this.port.ToString().Length > 2)
-        { //TODO change implementation of main camera show before release 
+        if (this.ip == "127.0.0.1" && this.port == 0)
+        {
+            this.rtspAddr = null;
+        }
+        else
+        {
             this.rtspAddr = "rtsp://" + this.ip + ":";
             Debug.Log("CONNECTION : Rtsp address is set : " + this.rtspAddr);
         }
