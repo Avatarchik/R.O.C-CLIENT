@@ -28,4 +28,15 @@ public class PositionScript : MonoBehaviour {
             GameObject.Find("YText").GetComponent<Text>().text = YAngleText + (YAngle).ToString();
         }
     }
+
+    public float getXAngle()
+    {
+        return XAngle;
+    }
+
+    public float getYAngle()
+    {
+        return YAngle;
+    }
+
 }

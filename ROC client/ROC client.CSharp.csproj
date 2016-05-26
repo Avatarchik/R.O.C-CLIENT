@@ -51,11 +51,17 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.Advertisements">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Analytics">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
@@ -137,7 +143,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\GPSScript.cs" />
     <Compile Include="Assets\GoogleMaps\Scripts\GoogleMap.cs" />
     <Compile Include="Assets\ProgressBar\Script\ProgressBarBehaviour.cs" />
     <Compile Include="Assets\ProgressBar\Script\ProgressRadialBehaviour.cs" />
@@ -146,6 +151,7 @@
     <Compile Include="Assets\Scripts\CommunicationManagerScript.cs" />
     <Compile Include="Assets\Scripts\DataTransferScript.cs" />
     <Compile Include="Assets\Scripts\FpsScript.cs" />
+    <Compile Include="Assets\Scripts\GPSScript.cs" />
     <Compile Include="Assets\Scripts\MainMenuScript.cs" />
     <Compile Include="Assets\Scripts\MainSceneManagerScript.cs" />
     <Compile Include="Assets\Scripts\MenuScript.cs" />
@@ -154,6 +160,7 @@
     <Compile Include="Assets\Scripts\PositionScript.cs" />
     <Compile Include="Assets\Scripts\TextureConvert.cs" />
     <Compile Include="Assets\Src\CaptureJob.cs" />
+    <Compile Include="Assets\Src\MapUtils.cs" />
     <Compile Include="Assets\UnityTestTools\Assertions\AssertionComponent.cs" />
     <Compile Include="Assets\UnityTestTools\Assertions\AssertionException.cs" />
     <Compile Include="Assets\UnityTestTools\Assertions\Assertions.cs" />
