@@ -26,9 +26,9 @@ public class MainMenuScript : MonoBehaviour {
         communicationManagerScript = GameObject.Find("ManagerObject").GetComponent<CommunicationManagerScript>();
         loadingPanel = GameObject.Find("LoadingPanel");
         statusImage = GameObject.Find("StatusImage").GetComponent<Image>();
-        initButton = GameObject.Find("InitButton");
-        resetButton = GameObject.Find("ResetButton");
-        connectButton = GameObject.Find("ConnectButton").GetComponent<Button>();
+        initButton = GameObject.Find("MD-Button-Initialiser");
+        resetButton = GameObject.Find("MD-Button-Reset");
+        connectButton = GameObject.Find("MD-Button-Connect").GetComponentsInChildren<Button>()[0];
         progressBarLabel = GameObject.Find("ProgressBarLabelAbove").GetComponent<ProgressBarBehaviour>();
 
         loadingPanel.SetActive(false);
@@ -44,8 +44,8 @@ public class MainMenuScript : MonoBehaviour {
     public void InitConnection()
     {
         int portParsed;
-        string ip = GameObject.Find("IpField").GetComponent<InputField>().text;
-        string port = GameObject.Find("PortField").GetComponent<InputField>().text;
+        string ip = GameObject.Find("MD-Input-Addr").GetComponentsInChildren<InputField>()[0].text;
+        string port = GameObject.Find("MD-Input-Port").GetComponentsInChildren<InputField>()[0].text;
 
         // Check that ip and port are not empty
         if (string.IsNullOrEmpty(port) == true || string.IsNullOrEmpty(ip) == true) {
@@ -88,12 +88,20 @@ public class MainMenuScript : MonoBehaviour {
         resetButton.SetActive(false);
         initButton.SetActive(true);
         connectButton.interactable = false;
-    }        
+    }
 
     // Function called upon switching to view scene
     public void SwitchToViewScene()
     {
         StartCoroutine("loading");
+    }
+
+    public void SetNbScreen(bool multiScreenOpt)
+    {
+        if (multiScreenOpt == true)
+            networkScript.SetNbCamera(2);
+        else
+            networkScript.SetNbCamera(1);
     }
 
     // Routine allowing a loading bar to show while scene changes

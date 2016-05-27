@@ -31,6 +31,12 @@ public class NetworkScript : MonoBehaviour
         Application.LoadLevel("MenuScene");
     }
 
+    public void SetNbCamera(int nbCamera)
+    {
+        Debug.Log("test camera set");
+        this._nbCamera = nbCamera;
+    }
+
     //Method called on connect button click, returns -1 upon failure and 0 upon success
     public int SetUpNetwork(string ip, int port)
     {
